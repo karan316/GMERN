@@ -5,6 +5,7 @@ module.exports = (context) => {
     // context = {...headers}
     const authHeader = context.req.headers.authorization;
     if (authHeader) {
+        // HEADER => Authorization: "Bearer <token>"
         // returns two strings Bearer and token
         const token = authHeader.split("Bearer ")[1];
         if (token) {
@@ -13,12 +14,12 @@ module.exports = (context) => {
                 return user;
             } catch (error) {
                 // not a valid token
-                throw new AuthenticationError("Invalid token");
+                throw new AuthenticationError("Invalid Authentication token");
             }
         }
         // wrong format
-        throw new Error("Auth token must be 'Bearer [token]' ");
+        throw new Error("Authentication token must be 'Bearer [token]' ");
     }
     // no auth header provided
-    throw new Error("No auth header provided");
+    throw new Error("Authorization header must be provided");
 };
