@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Button } from "semantic-ui-react";
 import { gql, useMutation } from "@apollo/client";
 // MODULE IMPORTS
+import { AuthContext } from "../context/auth";
 import { useForm } from "../hooks/customHooks";
 const Register = (props) => {
+    const { login } = useContext(AuthContext);
     const [errors, setErrors] = useState({});
     const initialState = {
         username: "",
@@ -19,8 +21,8 @@ const Register = (props) => {
 
     const [addUser, { loading }] = useMutation(REGISTER_USER, {
         // update is called when the result is obtained successfully
-        update(_, result) {
-            console.log(result);
+        update(_, { data: { register: userData } }) {
+            login(userData);
             props.history.push("/");
         },
         // variables are the input to the mutation. here values have the same object name as variables so assign directly
