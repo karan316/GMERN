@@ -15,9 +15,7 @@ function PostForm() {
             const data = proxy.readQuery({
                 query: FETCH_POSTS_QUERY,
             });
-            // data.getPosts = [result.data.createPost, ...data.getPosts];
             // to persist the query
-
             proxy.writeQuery({
                 query: FETCH_POSTS_QUERY,
                 data: {
@@ -27,26 +25,40 @@ function PostForm() {
 
             values.body = "";
         },
+        onError(err) {
+            // this is the errors object we sent in the graphql server
+            console.log("No input provided.");
+        },
     });
 
     function createPostCallback() {
         createPost();
     }
     return (
-        <Form onSubmit={onSubmit}>
-            <h2>Create a Post: </h2>
-            <Form.Field>
-                <Form.Input
-                    placeholder="What's up?"
-                    name='body'
-                    onChange={onChange}
-                    value={values.body}
-                />
-                <Button type='submit' color='teal'>
-                    Submit
-                </Button>
-            </Form.Field>
-        </Form>
+        <>
+            <Form onSubmit={onSubmit}>
+                <h2>Create a Post: </h2>
+                <Form.Field>
+                    <Form.Input
+                        placeholder="What's up?"
+                        name='body'
+                        onChange={onChange}
+                        value={values.body}
+                        error={error ? true : false}
+                    />
+                    <Button type='submit' color='teal'>
+                        Submit
+                    </Button>
+                </Form.Field>
+            </Form>
+            {error && (
+                <div className='ui error message' style={{ marginBottom: 20 }}>
+                    <ul className='list'>
+                        <li>{error.graphQLErrors[0].message}</li>
+                    </ul>
+                </div>
+            )}
+        </>
     );
 }
 

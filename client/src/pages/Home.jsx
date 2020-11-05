@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Grid } from "semantic-ui-react";
+import { Grid, Transition } from "semantic-ui-react";
 import { useQuery } from "@apollo/client";
 // MODULE IMPORTS
 import { AuthContext } from "../context/auth";
@@ -25,12 +25,16 @@ const Home = () => {
                         <PostForm />
                     </Grid.Column>
                 )}
-                {posts &&
-                    posts.map((post) => (
-                        <Grid.Column key={post.id} style={{ marginBottom: 20 }}>
-                            <PostCard post={post} />
-                        </Grid.Column>
-                    ))}
+                <Transition.Group>
+                    {posts &&
+                        posts.map((post) => (
+                            <Grid.Column
+                                key={post.id}
+                                style={{ marginBottom: 20 }}>
+                                <PostCard post={post} />
+                            </Grid.Column>
+                        ))}
+                </Transition.Group>
             </Grid.Row>
         </Grid>
     );
