@@ -9,7 +9,7 @@ const DeleteButton = ({ postId, commentId, callback }) => {
     const [deletePostOrComment] = useMutation(mutation, {
         update(proxy) {
             setConfirmOpen(false);
-            if(!commentId) {
+            if (!commentId) {
                 const data = proxy.readQuery({
                     query: FETCH_POSTS_QUERY,
                 });
@@ -52,15 +52,18 @@ const DELETE_POST_MUTATION = gql`
 `;
 
 const DELETE_COMMENT_MUTATION = gql`
-
-mutation deleteComment($postId: ID!, commentId: ID!) {
-    deleteComment(postId: $postId, commentId: $commentId) {
-        id comments {
-            id username createdAt body
+    mutation deleteComment($postId: ID!, $commentId: ID!) {
+        deleteComment(postId: $postId, commentId: $commentId) {
+            id
+            comments {
+                id
+                username
+                createdAt
+                body
+            }
+            commentCount
         }
-        commentCount
     }
-
-}
+`;
 
 export default DeleteButton;

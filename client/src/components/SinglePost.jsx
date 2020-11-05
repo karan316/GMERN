@@ -1,6 +1,14 @@
-import React, { useContext } from "react";
-import { gql, useQuery } from "@apollo/client";
-import { Card, Grid, Image, Button, Icon, Label } from "semantic-ui-react";
+import React, { useContext, useState, useRef } from "react";
+import { gql, useQuery, useMutation } from "@apollo/client";
+import {
+    Card,
+    Grid,
+    Image,
+    Button,
+    Icon,
+    Label,
+    Form,
+} from "semantic-ui-react";
 import moment from "moment";
 
 import { AuthContext } from "../context/auth";
@@ -9,9 +17,21 @@ import DeleteButton from "./DeleteButton";
 
 const SinglePost = (props) => {
     const { user } = useContext(AuthContext);
+    const commentInputRef = useRef(null);
+
+    const [comment, setComment] = useState("");
     const postId = props.match.params.postId;
     const { data } = useQuery(FETCH_POST_QUERY, {
         variables: { postId },
+    });
+
+    const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION, {
+        update() {
+            setComment("");
+            // to make comment input out of focus
+            commentInputRef.current.blur();
+        },
+        variables: { postId, body: comment },
     });
     function deletePostCallback() {
         props.history.push("/");
@@ -78,7 +98,36 @@ const SinglePost = (props) => {
                                 )}
                             </Card.Content>
                         </Card>
-                        {user && <Card fluid></Card>}
+                        {user && (
+                            <Card fluid>
+                                <Card.Content>
+                                    <p>Post a comment</p>
+                                    <Form>
+                                        <div className='ui action input fluid'>
+                                            <input
+                                                type='text'
+                                                placeholder='Comment!'
+                                                name='comment'
+                                                value={comment}
+                                                onChange={(event) =>
+                                                    setComment(
+                                                        event.target.value
+                                                    )
+                                                }
+                                                ref={commentInputRef}
+                                            />
+                                            <button
+                                                type='submit'
+                                                className='ui button teal'
+                                                disabled={comment.trim() === ""}
+                                                onClick={submitComment}>
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </Form>
+                                </Card.Content>
+                            </Card>
+                        )}
                         {comments.map((comment) => (
                             <Card fluid key={comment.id}>
                                 <Card.Content>
